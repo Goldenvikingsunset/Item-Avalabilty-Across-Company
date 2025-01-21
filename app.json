@@ -1,0 +1,32 @@
+{
+    "id": "d1c75146-3f6d-44bf-8942-dca819444ead",
+    "name": "Item-Availability-Across-Company",
+    "publisher": "Paul Rennison",
+    "version": "1.0.0.0",
+    "brief": "",
+    "description": "",
+    "privacyStatement": "",
+    "EULA": "",
+    "help": "",
+    "url": "",
+    "logo": "",
+    "dependencies": [],
+    "screenshots": [],
+    "platform": "1.0.0.0",
+    "application": "25.1.25873.25976",
+    "idRanges": [
+        {
+            "from": 50300,
+            "to": 50309
+        }
+    ],
+    "resourceExposurePolicy": {
+        "allowDebugging": true,
+        "allowDownloadingSource": true,
+        "includeSourceInSymbolFile": true
+    },
+    "runtime": "14.0",
+    "features": [
+        "NoImplicitWith"
+    ]
+}
