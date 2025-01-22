@@ -52,6 +52,11 @@ table 50302 "Combined Posted Sales Inv."
             Caption = 'Remaining Amount';
             AutoFormatExpression = "Currency Code";
         }
+        field(12; "Location Code"; Code[10])
+        {
+            Caption = 'Location Code';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

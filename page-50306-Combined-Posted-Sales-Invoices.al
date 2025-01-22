@@ -50,6 +50,18 @@ page 50306 "Combined Posted Sales Invoices"
                         CurrPage.Update();
                     end;
                 }
+                field(LocationFilter; LocationFilter)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Location Filter';
+                    TableRelation = Location;
+
+                    trigger OnValidate()
+                    begin
+                        LoadData();
+                        CurrPage.Update();
+                    end;
+                }
             }
             repeater(Lines)
             {
@@ -57,6 +69,11 @@ page 50306 "Combined Posted Sales Invoices"
                 field("Source Company"; Rec."Source Company")
                 {
                     ApplicationArea = All;
+                }
+                field("Location Code"; Rec."Location Code")  // Change from "Location"
+                {
+                    ApplicationArea = All;
+                    Caption = 'Location';  // Keep caption as 'Location' for display
                 }
                 field("No."; Rec."No.")
                 {
@@ -153,6 +170,7 @@ page 50306 "Combined Posted Sales Invoices"
                     Clear(CompanyFilter);
                     Clear(DateFilter);
                     Clear(CustomerFilter);
+                    Clear(LocationFilter);
                     LoadData();
                     CurrPage.Update();
                 end;
@@ -161,6 +179,7 @@ page 50306 "Combined Posted Sales Invoices"
     }
 
     var
+        LocationFilter: Code[10];
         CompanyFilter: Text;
         DateFilter: Text;
         CustomerFilter: Code[20];
@@ -181,11 +200,12 @@ page 50306 "Combined Posted Sales Invoices"
         HasRemainingAmount := Rec."Remaining Amount" <> 0;
     end;
 
-    procedure SetFilters(NewCompanyFilter: Text; NewDateFilter: Text; NewCustomerFilter: Code[20])
+    procedure SetFilters(NewCompanyFilter: Text; NewDateFilter: Text; NewCustomerFilter: Code[20]; NewLocationFilter: Code[10])
     begin
         CompanyFilter := NewCompanyFilter;
         DateFilter := NewDateFilter;
         CustomerFilter := NewCustomerFilter;
+        LocationFilter := NewLocationFilter;
         LoadData();
     end;
 
@@ -218,6 +238,9 @@ page 50306 "Combined Posted Sales Invoices"
                     if CustomerFilter <> '' then
                         SalesInvoiceHeader.SetRange("Sell-to Customer No.", CustomerFilter);
 
+                    if LocationFilter <> '' then
+                        SalesInvoiceHeader.SetRange("Location Code", LocationFilter);
+
                     if SalesInvoiceHeader.FindSet() then
                         repeat
                             // First calculate invoice amounts
@@ -228,6 +251,7 @@ page 50306 "Combined Posted Sales Invoices"
                             CustLedgerEntry.ChangeCompany(Companies.Name);
                             CustLedgerEntry.SetRange("Document Type", CustLedgerEntry."Document Type"::Invoice);
                             CustLedgerEntry.SetRange("Document No.", SalesInvoiceHeader."No.");
+
                             if CustLedgerEntry.FindFirst() then begin
                                 CustLedgerEntry.CalcFields("Remaining Amount");
 
@@ -236,11 +260,14 @@ page 50306 "Combined Posted Sales Invoices"
                                 Rec.Init();
                                 Rec."Entry No." := EntryNo;
                                 Rec."Source Company" := Companies.Name;
+                                Rec."Location Code" := SalesInvoiceHeader."Location Code";
                                 Rec."No." := SalesInvoiceHeader."No.";
                                 Rec."Posting Date" := SalesInvoiceHeader."Posting Date";
                                 Rec."Due Date" := SalesInvoiceHeader."Due Date";
                                 Rec."Sell-to Customer No." := SalesInvoiceHeader."Sell-to Customer No.";
                                 Rec."Sell-to Customer Name" := SalesInvoiceHeader."Sell-to Customer Name";
+
+
                                 // Get the calculated amounts
                                 Rec.Amount := SalesInvoiceHeader.Amount;
                                 Rec."Amount Including VAT" := SalesInvoiceHeader."Amount Including VAT";
